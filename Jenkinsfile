@@ -5,6 +5,7 @@ pipeline {
         stage('Train') {
             steps {
                 echo 'Training..'
+                sh 'whoami'
             }
         }
     }
