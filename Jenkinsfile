@@ -7,6 +7,7 @@ pipeline {
                 echo 'Training..'
                 sh 'whoami'
                 sh 'ls -l'
+                sh 'pwd'
             }
         }
     }
