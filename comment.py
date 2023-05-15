@@ -15,7 +15,7 @@ def get_pull_requests(session: requests.Session) -> Tuple[int, dict]:
     """Gets pull requests data.
 
     Args:
-        session: The session object with auth set up.    
+        session: The session object with auth set up.
 
     Returns:
         JSON response from Bitbucket containing pull requests data.
@@ -29,10 +29,10 @@ def get_pull_requests(session: requests.Session) -> Tuple[int, dict]:
 
 def get_branch_pull_request(data: dict) -> int:
     """Gets the branch pull request given `data`.
-    
+
     Args:
         data: The JSON dictionary of pull requests data.
-        
+
     Returns:
         The ID of the branch's pull request.
     """
@@ -52,7 +52,7 @@ def add_pull_request_comment(
     Args:
         session: The requests Session object with auth set up.
         pr: The ID of the PR to comment on.
-        comment: The comment to add. 
+        comment: The comment to add.
 
     Returns:
         The status code for the POST request.
@@ -66,7 +66,7 @@ def add_pull_request_comment(
 
 def get_parser() -> argparse.ArgumentParser:
     """Gets the comment script argument parser.
-    
+
     Returns:
         The parser.
     """
@@ -79,7 +79,7 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main(argv: List[str] = sys.argv[1:]) -> int:
     """Adds a PR comment to a specified PR.
-    
+
     Returns:
         Status code of comment attempt.
     """
