@@ -1,4 +1,5 @@
 import argparse
+import os
 import subprocess as sp
 import sys
 from typing import List, Tuple
@@ -10,16 +11,19 @@ PROJECT = 'DAT'
 REPO = 'tf-beginner'
 
 
-def get_pull_requests() -> Tuple[int, dict]:
+def get_pull_requests(session: requests.Session) -> Tuple[int, dict]:
     """Gets pull requests data.
-    
+
+    Args:
+        session: The session object with auth set up.    
+
     Returns:
         JSON response from Bitbucket containing pull requests data.
     """
     url = (
         f'{BITBUCKET}/rest/api/latest/projects/{PROJECT}/repos/{REPO}/'
         'pull-requests')
-    r = requests.get(url=url)
+    r = session.get(url=url, verify=False)
     return r.status_code, r.json() if r.status_code < 400 else {}
 
 
@@ -38,10 +42,15 @@ def get_branch_pull_request(data: dict) -> int:
         pr for pr in data['values'] if pr['fromRef']['displayID'] == branch]
     return max([pr['id'] for pr in branch_data['values']])
 
-def add_pull_request_comment(pr: int, comment: str) -> int:
+def add_pull_request_comment(
+    session: requests.Session,
+    pr: int,
+    comment: str,
+) -> int:
     """Adds `comment` to pull request with ID `pr`.
 
     Args:
+        session: The requests Session object with auth set up.
         pr: The ID of the PR to comment on.
         comment: The comment to add. 
 
@@ -51,7 +60,7 @@ def add_pull_request_comment(pr: int, comment: str) -> int:
     url = (
         f'{BITBUCKET}/rest/api/latest/projects/{PROJECT}/repos/{REPO}/'
         f'pull-requests/{pr}/comments')
-    r = requests.post(url=url, data={'text': comment})
+    r = session.post(url=url, data={'text': comment}, verify=False)
     return r.status_code
 
 
@@ -76,12 +85,14 @@ def main(argv: sys.argv[1:] = List[str]) -> int:
     """
     args = get_parser().parse_args(argv)
     comment = open(args.file).read() if args.file else args.comment
-    status_code, pr_data = get_pull_requests()
-    if status_code >= 400:
+    with requests.Session() as session:
+        session.auth = (os.environ['USERNAME'], os.environ['PASSWORD'])
+        status_code, pr_data = get_pull_requests(session)
+        if status_code >= 400:
+            return status_code
+        branch_pr = get_branch_pull_request(pr_data)
+        status_code = add_pull_request_comment(session, branch_pr, comment)
         return status_code
-    branch_pr = get_branch_pull_request(pr_data)
-    status_code = add_pull_request_comment(branch_pr, comment)
-    return status_code
 
 
 if __name__ == '__main__':
