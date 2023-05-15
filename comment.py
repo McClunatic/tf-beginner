@@ -102,7 +102,7 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
         status_code = add_pull_request_comment(session, branch_pr, comment)
         if status_code >= 400:
             print('Failed to add PR comment')
-        return status_code
+        return 0 if status_code == 201 else status_code
 
 
 if __name__ == '__main__':

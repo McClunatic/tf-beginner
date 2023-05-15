@@ -14,7 +14,7 @@ pipeline {
                 sh '. miniconda3/bin/activate && pip install tensorflow requests'
                 sh '. miniconda3/bin/activate && python train.py comment'
                 withCredentials([usernamePassword(credentialsId: 'BitBucket', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                  sh 'test $(. miniconda3/bin/activate && python comment.py --file comment.md) -eq 201'
+                  sh '. miniconda3/bin/activate && python comment.py --file comment.md'
                 }
             }
         }
