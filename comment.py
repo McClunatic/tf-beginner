@@ -89,9 +89,12 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
         session.auth = (os.environ['USERNAME'], os.environ['PASSWORD'])
         status_code, pr_data = get_pull_requests(session)
         if status_code >= 400:
+            print('Failed to get PR data')
             return status_code
         branch_pr = get_branch_pull_request(pr_data)
         status_code = add_pull_request_comment(session, branch_pr, comment)
+        if status_code >= 400:
+            print('Failed to add PR comment')
         return status_code
 
 
