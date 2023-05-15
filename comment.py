@@ -1,3 +1,5 @@
+import argparse
+import subprocess as sp
 import sys
 from typing import List, Tuple
 
@@ -21,17 +23,20 @@ def get_pull_requests() -> Tuple[int, dict]:
     return r.status_code, r.json() if r.status_code < 400 else {}
 
 
-def get_latest_pull_request(data: dict) -> int:
-    """Gets the latest pull request given `data.
+def get_branch_pull_request(data: dict) -> int:
+    """Gets the branch pull request given `data`.
     
     Args:
         data: The JSON dictionary of pull requests data.
         
     Returns:
-        The ID of the latest pull request.
+        The ID of the branch's pull request.
     """
-    return max([pr['id'] for pr in data['values']])
-
+    cproc = sp.run('git rev-parse --abbrev-ref HEAD'.split(), stdout=sp.PIPE)
+    branch = cproc.stdout.decode().strip()
+    branch_data = [
+        pr for pr in data['values'] if pr['fromRef']['displayID'] == branch]
+    return max([pr['id'] for pr in branch_data['values']])
 
 def add_pull_request_comment(pr: int, comment: str) -> int:
     """Adds `comment` to pull request with ID `pr`.
@@ -50,21 +55,32 @@ def add_pull_request_comment(pr: int, comment: str) -> int:
     return r.status_code
 
 
+def get_parser() -> argparse.ArgumentParser:
+    """Gets the comment script argument parser.
+    
+    Returns:
+        The parser.
+    """
+    parser = argparse.ArgumentParser(description='Add a comment to the PR.')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--comment', help='Comment string to add')
+    group.add_argument('--file', help='File name to read comment from')
+    return parser
+
+
 def main(argv: sys.argv[1:] = List[str]) -> int:
     """Adds a PR comment to a specified PR.
     
     Returns:
         Status code of comment attempt.
     """
-    if len(argv) != 1:
-        print('Must specify comment to post', file=sys.stderr)
-        return 500
-    comment = argv[1]
+    args = get_parser().parse_args(argv)
+    comment = open(args.file).read() if args.file else args.comment
     status_code, pr_data = get_pull_requests()
     if status_code >= 400:
         return status_code
-    latest_pr = get_latest_pull_request(pr_data)
-    status_code = add_pull_request_comment(latest_pr, comment)
+    branch_pr = get_branch_pull_request(pr_data)
+    status_code = add_pull_request_comment(branch_pr, comment)
     return status_code
 
 
