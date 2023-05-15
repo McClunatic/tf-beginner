@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 import requests
 
-BITBUCKET = 'https://bitbucket.nnlscience.onmicrosoft.com:8443/'
+BITBUCKET = 'https://bitbucket.nnlscience.onmicrosoft.com:8443'
 PROJECT = 'DAT'
 REPO = 'tf-beginner'
 
@@ -39,8 +39,8 @@ def get_branch_pull_request(data: dict) -> int:
     cproc = sp.run('git rev-parse --abbrev-ref HEAD'.split(), stdout=sp.PIPE)
     branch = cproc.stdout.decode().strip()
     branch_data = [
-        pr for pr in data['values'] if pr['fromRef']['displayID'] == branch]
-    return max([pr['id'] for pr in branch_data['values']])
+        pr for pr in data['values'] if pr['fromRef']['displayId'] == branch]
+    return max([pr['id'] for pr in branch_data])
 
 def add_pull_request_comment(
     session: requests.Session,
