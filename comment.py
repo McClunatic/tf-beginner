@@ -77,7 +77,7 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: sys.argv[1:] = List[str]) -> int:
+def main(argv: List[str] = sys.argv[1:]) -> int:
     """Adds a PR comment to a specified PR.
     
     Returns:
