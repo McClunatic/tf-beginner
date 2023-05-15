@@ -40,7 +40,11 @@ def get_branch_pull_request(data: dict) -> int:
     branch = cproc.stdout.decode().strip()
     branch_data = [
         pr for pr in data['values'] if pr['fromRef']['displayId'] == branch]
-    return max([pr['id'] for pr in branch_data])
+    try:
+        return max([pr['id'] for pr in branch_data])
+    except ValueError:
+        # TODO: find out branch info
+        return max([pr['id'] for pr in data['values']])
 
 def add_pull_request_comment(
     session: requests.Session,
@@ -58,7 +62,7 @@ def add_pull_request_comment(
         The status code for the POST request.
     """
     url = (
-        f'{BITBUCKET}/rest/api/latest/projects/{PROJECT}/repos/{REPO}/'
+        f'{BITBUCKET}/rest/api//projects/{PROJECT}/repos/{REPO}/'
         f'pull-requests/{pr}/comments')
     r = session.post(url=url, json={'text': comment}, verify=False)
     return r.status_code
