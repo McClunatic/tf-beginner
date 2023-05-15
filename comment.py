@@ -86,6 +86,9 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
     args = get_parser().parse_args(argv)
     comment = open(args.file).read() if args.file else args.comment
     with requests.Session() as session:
+        if 'USERNAME' not in os.environ or 'PASSWORD' not in os.environ:
+            print('Failed to get credentials')
+            return 500
         session.auth = (os.environ['USERNAME'], os.environ['PASSWORD'])
         status_code, pr_data = get_pull_requests(session)
         if status_code >= 400:
