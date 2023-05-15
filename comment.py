@@ -60,7 +60,7 @@ def add_pull_request_comment(
     url = (
         f'{BITBUCKET}/rest/api/latest/projects/{PROJECT}/repos/{REPO}/'
         f'pull-requests/{pr}/comments')
-    r = session.post(url=url, data={'text': comment}, verify=False)
+    r = session.post(url=url, json={'text': comment}, verify=False)
     return r.status_code
 
 
