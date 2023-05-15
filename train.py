@@ -3,6 +3,8 @@
 See: https://www.tensorflow.org/tutorials/quickstart/beginner
 """
 
+import sys
+
 import tensorflow as tf
 
 
@@ -29,6 +31,15 @@ def train():
         metrics=['accuracy'])
 
     model.fit(x_train, y_train, epochs=5)
+
+    if len(sys.argv) > 1 and sys.argv[1] == 'comment':
+        loss, accuracy = model.evaluate(x_test,  y_test)
+        with open('comment.md', 'w') as md:
+            md.write('## Training results \n\n')
+            md.write('Summary of metrics for training on MNIST dataset: \n\n')
+            md.write('| Statistic | Value |\n|--|--|\n')
+            md.write(f'| loss | {loss} |\n')
+            md.write(f'| accuracy | {accuracy} |\n')
 
 
 if __name__ == '__main__':
