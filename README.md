@@ -2,6 +2,13 @@
 
 A simple demo of TensorFlow's Keras model API.
 
+## Python requirements
+
+Install the following:
+
+* `tensorflow`
+* `mlem[streamlit,docker,fastapi]`
+
 ## Using MLEM
 
 The `train.py` script supports a `save` option to save the model to a
