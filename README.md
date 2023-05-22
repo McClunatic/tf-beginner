@@ -72,6 +72,19 @@ $ mlem deploy run docker_container docker.mlem \
 ✅  Container mlem-deploy-1684781985 is up
 ```
 
+### Interacting with FastAPI backend
+
+Below is a quick example for interacting with the backend. You
+can check out the API documentation by visiting <http://localhost:8081>.
+
+```python
+>>> def ask_for(num: int):
+...  payload = {'file': (f'test_{num:02d}.jpg', open(f'images/test_{num:02d}.jpg', 'rb'), 'image/jpeg')}
+...  return requests.post('http://localhost:8081/__call__', files=payload).json()
+>>> ask_for(15)
+5
+```
+
 ## Running pipelines
 
 This repository is centralized in Bitbucket Data Center with pipeline
