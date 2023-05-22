@@ -7,6 +7,8 @@ import sys
 
 import tensorflow as tf
 
+from mlem import api
+
 
 def train():
     """Trains a simple model against the MNIST dataset."""
@@ -40,6 +42,13 @@ def train():
             md.write('| Statistic | Value |\n|--|--|\n')
             md.write(f'| loss | {loss} |\n')
             md.write(f'| accuracy | {accuracy} |\n')
+    elif len(sys.argv) > 1 and sys.argv[1] == 'save':
+        api.save(
+            model,
+            'models/model',
+            preprocess=lambda x: tf.expand_dims(x, axis=0),
+            postprocess=lambda x: tf.argmax(tf.squeeze(x)).numpy(),
+            sample_data=x_test[0])
 
 
 if __name__ == '__main__':
