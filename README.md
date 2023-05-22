@@ -2,6 +2,39 @@
 
 A simple demo of TensorFlow's Keras model API.
 
+## Using MLEM
+
+The `train.py` script supports a `save` option to save the model to a
+local `models/` directory:
+
+```sh
+$ python train.py save
+$ ls models/
+model model.mlem
+```
+
+To generate input for the model when served, run `save_images.py`:
+
+```sh
+python save_images.py
+```
+
+With input ready, serve the model with Streamlit!
+
+```sh
+mlem serve streamlit \
+    --model models/model \
+    --ui_port 8082 \
+    --request_serializer pil_numpy
+```
+
+Here we specify the model to use, a UI port instead of the
+[default special port 80](https://mlem.ai/doc/user-guide/serving/streamlit#running-streamlit-model-server-from-code), and a
+serializer to convert the input images to numpy array format.
+
+Once the app is up and running, visit the web site and try dragging
+and dropping images from our `images/` directory!
+
 ## Running pipelines
 
 This repository is centralized in Bitbucket Data Center with pipeline
