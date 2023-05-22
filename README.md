@@ -26,6 +26,8 @@ To generate input for the model when served, run `save_images.py`:
 python save_images.py
 ```
 
+### Streamlit for serving
+
 With input ready, serve the model with Streamlit!
 
 ```sh
@@ -41,6 +43,34 @@ serializer to convert the input images to numpy array format.
 
 Once the app is up and running, visit the web site and try dragging
 and dropping images from our `images/` directory!
+
+### Streamlit for deployment
+
+The same Streamlit application can be deployed as a Docker container
+running the following:
+
+```sh
+# If you're using Podman, set this and also patch
+# mlem.contrib.docker.utils:create_docker_client to not override it
+# I need to open an issue about this!
+$ export DOCKER_HOST='unix:///run/user/1000/podman/podman.sock'
+$ mlem deploy run docker_container docker.mlem \
+    --model models/model \
+    --server streamlit \
+    --server.ui_port 8082 \
+    --server.request_serializer pil_numpy \
+    --ports.0 8082:8082 --ports.1 8081:8081
+⏳️ Loading deployment from docker.mlem
+⏳️ Loading model from models/model.mlem
+🛠 Creating docker image mlem-deploy-1684781576
+  💼 Adding model files...
+  🛠 Generating dockerfile...
+  💼 Adding sources...
+  💼 Generating requirements file...
+  🛠 Building docker image mlem-deploy-1684781576:latest...
+  ✅  Built docker image mlem-deploy-1684781576:latest
+✅  Container mlem-deploy-1684781985 is up
+```
 
 ## Running pipelines
 
